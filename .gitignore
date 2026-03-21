@@ -1,0 +1,6 @@
+# Sensitive files
+.env
+simple_proxy.py
+
+# Folders
+/myENV/
