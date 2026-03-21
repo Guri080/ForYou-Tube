@@ -1,6 +1,9 @@
 # Sensitive files
 .env
+
+# extraneous helper files
 simple_proxy.py
+/agent/__pychache__
 
 # Folders
 /myENV/

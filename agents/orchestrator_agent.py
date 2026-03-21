@@ -41,7 +41,7 @@ Example output for "I like machine learning":
     # strip markdown code blocks if model wraps it in ```json ... ```
     cleaned = result.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
 
-    # filter out any agents the model hallucinated
+    # filter out any agents not in AVAILABLE_AGENTS dict
     valid_result = {k: v for k, v in json.loads(cleaned).items() if k in AVAILABLE_AGENTS}
     return valid_result
 
