@@ -16,7 +16,6 @@ youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 # This is the MCP server instance
 app = Server("youtube-mcp")
 
-
 # ── Tool 1: search videos ─────────────────────────────────────────────
 @app.list_tools()
 async def list_tools() -> list[types.Tool]:
@@ -69,13 +68,32 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
             q=query,
             part="snippet",
             type="video",
-            maxResults=max_results,
-            order="relevance"
+            maxResults=max_results * 2,        # fetch extra to account for filtering
+            order="relevance",
+            videoEmbeddable="true",
+            videoType="any"                    # ← add this, fixes the API quirk
         ).execute()
+
+        # verify embeddable via videos().list
+        video_ids = [item["id"]["videoId"] for item in response.get("items", [])]
+        
+        details_response = youtube.videos().list(
+            id=",".join(video_ids),
+            part="snippet,status"
+        ).execute()
+
+        # only keep videos where embeddable is True
+        embeddable_ids = {
+            item["id"] 
+            for item in details_response.get("items", [])
+            if item.get("status", {}).get("embeddable", False)
+        }
 
         results = []
         for item in response.get("items", []):
             video_id = item["id"]["videoId"]
+            if video_id not in embeddable_ids:
+                continue                        # skip non-embeddable
             snippet = item["snippet"]
             results.append({
                 "title": snippet["title"],
@@ -85,9 +103,10 @@ async def call_tool(name: str, arguments: dict) -> list[types.TextContent]:
                 "video_id": video_id,
                 "published_at": snippet["publishedAt"]
             })
+            if len(results) >= max_results:
+                break                           # stop once we have enough
 
         return [types.TextContent(type="text", text=str(results))]
-
     elif name == "get_video_details":
         video_id = arguments["video_id"]
 

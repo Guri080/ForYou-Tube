@@ -9,12 +9,13 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 MCP_SERVER_PATH = str(Path(__file__).parent.parent / "MCP" / "youtube_mcp.py")
+PYTHON_PATH = "/Users/gursp/Desktop/ForYou-Tube/myENV/bin/python"
 
 
 # ── MCP bridge ────────────────────────────────────────────────────────
 async def call_mcp_tool(tool_name: str, tool_args: dict) -> str:
     server_params = StdioServerParameters(
-        command="python",
+        command=PYTHON_PATH,  # uses the exact same Python running this file
         args=[MCP_SERVER_PATH]
     )
     async with stdio_client(server_params) as (read, write):

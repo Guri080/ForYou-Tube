@@ -3,7 +3,10 @@
 
 # extraneous helper files
 simple_proxy.py
-/agent/__pychache__
+
+# cache files
+__pycache__/
+*.pyc
 
 # Folders
 /myENV/

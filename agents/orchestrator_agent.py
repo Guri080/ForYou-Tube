@@ -1,4 +1,4 @@
-# agents/orchestrator.py
+# agents/orchestrator_agent.py
 
 import sys
 import json
@@ -9,6 +9,8 @@ from runner import run_agent
 
 AVAILABLE_AGENTS = {
     "youtube": "Finds relevant YouTube videos. Best for tutorials, talks, and visual content.",
+    "hn": "Finds Hacker News stories. Best for tech, programming, startups and software discussion.",
+        "news": "Finds recent news articles. Best for current events, science, health, business and general topics.",
 }
 
 async def run_orchestrator(user_interest: str) -> dict:
@@ -18,21 +20,21 @@ async def run_orchestrator(user_interest: str) -> dict:
 
     result = await run_agent(
         system_prompt=f"""You are an orchestrator agent. Your job is to read 
-        the user's interest and decide which agents to call and what query to 
-        give each one.
+            the user's interest and decide which agents to call and what query to 
+            give each one.
 
-Available agents:
-{agents_list}
+            Available agents:
+            {agents_list}
 
-Rules:
-- Only select agents that are relevant to the user's interest
-- Tailor each query to suit that agent's platform (e.g. YouTube queries 
-  should be video-friendly, Reddit queries should be discussion-friendly)
-- Return ONLY a valid JSON object, no explanation, no markdown, no extra text
-- Format: {{"agent_name": "tailored query for that agent", ...}}
+            Rules:
+            - Only select agents that are relevant to the user's interest
+            - Tailor each query to suit that agent's platform (e.g. YouTube queries 
+            should be video-friendly, Reddit queries should be discussion-friendly)
+            - Return ONLY a valid JSON object, no explanation, no markdown, no extra text
+            - Format: {{"agent_name": "tailored query for that agent", ...}}
 
-Example output for "I like machine learning":
-{{"youtube": "machine learning tutorials for beginners", "reddit": "machine learning tips resources discussion"}}""",
+            Example output for "I like machine learning":
+            {{"youtube": "machine learning tutorials for beginners", "reddit": "machine learning tips resources discussion"}}""",
         user_message=f"I am interested in content about: {user_interest}",
         tools=None,
         tools_map=None
