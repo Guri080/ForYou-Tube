@@ -26,7 +26,7 @@ Built solo in under 24 hours for the Claude Builders Club @ ASU Hackathon 2026.
 
 ### Email digest pipeline
 
-![image alt]([https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/feed_diag.png](https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/digest_eg.png))
+![image alt](https://github.com/Guri080/ForYou-Tube/blob/1c153cd0d49272d5945ad85b5c4f8665c950380b/assests/digest_eg.png)
 
 ---
 
