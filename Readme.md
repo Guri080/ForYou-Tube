@@ -22,35 +22,17 @@ Built solo in under 24 hours for the Claude Builders Club @ ASU Hackathon 2026.
 
 ### Feed pipeline
 
-```
-User enters interests
-        ↓
-Orchestrator agent (Gemini 2.5 Flash-Lite)
-        ↓ — decides which agents to call, tailors each query per platform
-[YouTube agent]  [HN agent]  [News agent]   ← all run in parallel
-        ↓
-[YouTube MCP]   [Algolia API]  [NewsAPI]    ← each agent calls its tools
-        ↓
-Ranker agent — scores by relevance, merges into one sorted feed
-        ↓
-React frontend — unified feed with filter pills and source badges
-```
+![image alt](https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/feed_diag.png)
 
 ### Email digest pipeline
 
-```
-User sets digest topics + email
-        ↓
-APScheduler triggers daily at 8am
-        ↓
-Tinyfish AI scraper browses web for each topic in parallel
-        ↓
-digest_builder.py formats articles into HTML email
-        ↓
-Gmail SMTP delivers to any email address
-```
+![image alt]([https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/feed_diag.png](https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/digest_eg.png))
 
 ---
+
+## Example
+
+![image_alt](https://github.com/Guri080/ForYou-Tube/blob/c00d5a9d4cd28886d66f47ac226b6bb553d558a5/assests/feed_eg.png)
 
 ## Tech Stack
 
