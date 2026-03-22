@@ -1,11 +1,13 @@
 # agents/ranker_agent.py
 
-import sys
 import json
+import sys
 from pathlib import Path
+
 sys.path.append(str(Path(__file__).parent))
 
 from runner import run_agent
+
 
 async def run_ranker_agent(tagged_results: list) -> dict:
     """
@@ -25,7 +27,7 @@ async def run_ranker_agent(tagged_results: list) -> dict:
     """
 
     ranked = await run_agent(
-        system_prompt="""You are a ranker agent. You will be given content results 
+        system_prompt="""You are a ranker agent. You will be given content results
         from multiple sources, each tagged with the interest they were fetched for.
 
         Your job is to:
@@ -34,7 +36,7 @@ async def run_ranker_agent(tagged_results: list) -> dict:
         - Keep only the top 5 items per source across all interests combined
         - Sort all items by score descending
         - Construct YouTube thumbnail URLs using:
-          https://img.youtube.com/vi/{video_id}/maxresdefault.jpg
+          https://img.youtube.com/vi/{video_id}/hqdefault.jpg
 
         Return ONLY a valid JSON object, no explanation, no markdown, no extra text.
 
@@ -87,10 +89,16 @@ async def run_ranker_agent(tagged_results: list) -> dict:
         user_message=f"""## Tagged results from all agents:
 {json.dumps(tagged_results, indent=2)}""",
         tools=None,
-        tools_map=None
+        tools_map=None,
     )
 
-    cleaned = ranked.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    cleaned = (
+        ranked.strip()
+        .removeprefix("```json")
+        .removeprefix("```")
+        .removesuffix("```")
+        .strip()
+    )
     return json.loads(cleaned)
 
 
@@ -103,26 +111,42 @@ if __name__ == "__main__":
                 "interest": "machine learning",
                 "source": "youtube",
                 "items": [
-                    {"title": "Machine Learning for Beginners", "channel": "freeCodeCamp",
-                     "url": "https://youtube.com/watch?v=abc123", "video_id": "abc123",
-                     "description": "Full ML course for beginners"},
-                    {"title": "Neural Networks Explained", "channel": "3Blue1Brown",
-                     "url": "https://youtube.com/watch?v=def456", "video_id": "def456",
-                     "description": "Visual explanation of neural networks"}
-                ]
+                    {
+                        "title": "Machine Learning for Beginners",
+                        "channel": "freeCodeCamp",
+                        "url": "https://youtube.com/watch?v=abc123",
+                        "video_id": "abc123",
+                        "description": "Full ML course for beginners",
+                    },
+                    {
+                        "title": "Neural Networks Explained",
+                        "channel": "3Blue1Brown",
+                        "url": "https://youtube.com/watch?v=def456",
+                        "video_id": "def456",
+                        "description": "Visual explanation of neural networks",
+                    },
+                ],
             },
             {
                 "interest": "indie game development",
                 "source": "youtube",
                 "items": [
-                    {"title": "Indie game dev for beginners", "channel": "SonderingEmily",
-                     "url": "https://youtube.com/watch?v=GLijE8KoQjU", "video_id": "GLijE8KoQjU",
-                     "description": "Beginner guide to indie game dev"},
-                    {"title": "What 4 Years of Solo Indie Game Dev Looks Like", "channel": "zagawee",
-                     "url": "https://youtube.com/watch?v=ptvSKUPl5nM", "video_id": "ptvSKUPl5nM",
-                     "description": "Solo dev journey"}
-                ]
-            }
+                    {
+                        "title": "Indie game dev for beginners",
+                        "channel": "SonderingEmily",
+                        "url": "https://youtube.com/watch?v=GLijE8KoQjU",
+                        "video_id": "GLijE8KoQjU",
+                        "description": "Beginner guide to indie game dev",
+                    },
+                    {
+                        "title": "What 4 Years of Solo Indie Game Dev Looks Like",
+                        "channel": "zagawee",
+                        "url": "https://youtube.com/watch?v=ptvSKUPl5nM",
+                        "video_id": "ptvSKUPl5nM",
+                        "description": "Solo dev journey",
+                    },
+                ],
+            },
         ]
 
         result = await run_ranker_agent(fake_tagged_results)
