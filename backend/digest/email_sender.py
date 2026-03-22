@@ -1,29 +1,32 @@
 # backend/digest/email_sender.py
 
 import os
-import sys
-import resend
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv(Path(__file__).parent.parent.parent / ".env")
-resend.api_key = os.getenv("RESEND_API_KEY")
+
+GMAIL_USER = os.getenv("GMAIL_USER")
+GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
+
 
 async def send_digest_email(to_email: str, html_content: str) -> bool:
-    """
-    Sends the digest email via Resend.
-    Returns True if successful, False if failed.
-    """
     try:
-        params = {
-            "from": "ForYou Digest <onboarding@resend.dev>",
-            "to": [to_email],
-            "subject": f"Your ForYou Daily Digest",
-            "html": html_content
-        }
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = "Your ForYou Daily Digest"
+        msg["From"] = f"ForYou <{GMAIL_USER}>"
+        msg["To"] = to_email
 
-        email = resend.Emails.send(params)
-        print(f"[email] sent to {to_email} — id: {email['id']}")
+        msg.attach(MIMEText(html_content, "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            server.sendmail(GMAIL_USER, to_email, msg.as_string())
+
+        print(f"[email] sent to {to_email}")
         return True
 
     except Exception as e:
@@ -33,27 +36,12 @@ async def send_digest_email(to_email: str, html_content: str) -> bool:
 
 if __name__ == "__main__":
     import asyncio
-    from digest_builder import build_email_html
 
     async def test():
-        fake_articles = {
-            "machine learning": [
-                {
-                    "title": "GPT-5 Released with Major Improvements",
-                    "summary": "OpenAI releases GPT-5 with significantly better reasoning.",
-                    "url": "https://techcrunch.com",
-                    "source": "TechCrunch"
-                }
-            ]
-        }
-
-        html = build_email_html(
-            subscriber_email="gursparshsodhi@gmail.com",
-            digest_topics=["machine learning"],
-            topic_articles=fake_articles
+        success = await send_digest_email(
+            "gursparshsodhi@gmail.com",
+            "<h1>Test email from ForYou!</h1><p>Gmail SMTP is working.</p>"
         )
-
-        success = await send_digest_email("gursparshsodhi@gmail.com", html)
         print("Success!" if success else "Failed!")
 
     asyncio.run(test())

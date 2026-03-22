@@ -61,6 +61,7 @@ export default function App() {
   const [digestTopics, setDigestTopics] = useState([]);
   const [digestStatus, setDigestStatus] = useState(null);
   const [editingEmail, setEditingEmail] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
   function addInterest() {
     if (interests.length < 5) setInterests([...interests, ""]);
@@ -94,7 +95,7 @@ export default function App() {
     setActiveTopicFilter(null);
     setShowInterestsPanel(false);
     try {
-      const response = await fetch("http://localhost:8000/recommend", {
+      const response = await fetch(`${API_URL}/recommend`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interests: filled }),
@@ -117,7 +118,7 @@ export default function App() {
     const topics = digestTopics.filter((t) => t.trim());
     if (!topics.length) return;
     try {
-      const res = await fetch("http://localhost:8000/subscribe", {
+      const res = await fetch(`${API_URL}/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,7 +138,7 @@ export default function App() {
     if (!digestEmail) return;
     setDigestStatus("sending");
     try {
-      const res = await fetch("http://localhost:8000/send-digest", {
+      const res = await fetch(`${API_URL}/send-digest`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -152,7 +153,7 @@ export default function App() {
       setDigestStatus("error");
     }
   }
-
+  
   const filledInterests = interests.filter((i) => i.trim());
 
   const allItems = feed
